@@ -42,3 +42,8 @@ bcrypt<=3.1.7
 cryptography<=3.0
 sshtunnel>=0.1.5
 ldap3>=2.5.1
+#Flask-OIDC==1.4.0
+git+https://github.com/wilj/flask-oidc#egg=Flask-OIDC
+itsdangerous
+oauth2client
+python-jose

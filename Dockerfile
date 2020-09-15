@@ -164,7 +164,9 @@ RUN apk add --no-cache --virtual \
         postgresql-libs \
         shadow \
         sudo \
-        libcap && \
+        libcap \
+        git \
+        openssh && \
     pip install --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt && \
     pip install --no-cache-dir gunicorn==19.9.0 && \

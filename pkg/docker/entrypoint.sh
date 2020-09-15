@@ -20,6 +20,13 @@ EOF
 fi
 
 if [ ! -f /var/lib/pgadmin/pgadmin4.db ]; then
+    if [ -z "${OIDC_KEYCLOAK_CLIENT_SECRETS}" ]
+    then
+        echo "OpenId Connect is not enabled"
+    else
+        echo "OpenId Connect is enabled"
+    fi
+
     if [ -z "${PGADMIN_DEFAULT_EMAIL}" -o -z "${PGADMIN_DEFAULT_PASSWORD}" ]; then
         echo 'You need to specify PGADMIN_DEFAULT_EMAIL and PGADMIN_DEFAULT_PASSWORD environment variables'
         exit 1
