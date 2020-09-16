@@ -64,8 +64,4 @@ TIMEOUT=$(cd /pgadmin4 && python -c 'import config; print(config.SESSION_EXPIRAT
 # NOTE: currently pgadmin can run only with 1 worker due to sessions implementation
 # Using --threads to have multi-threaded single-process worker
 
-if [ ! -z ${PGADMIN_ENABLE_TLS} ]; then
-    exec gunicorn --timeout ${TIMEOUT} --bind ${PGADMIN_LISTEN_ADDRESS:-[::]}:${PGADMIN_LISTEN_PORT:-443} -w 1 --threads ${GUNICORN_THREADS:-25} --access-logfile ${GUNICORN_ACCESS_LOGFILE:--} --keyfile /certs/server.key --certfile /certs/server.cert run_pgadmin:app
-else
-    exec gunicorn --timeout ${TIMEOUT} --bind ${PGADMIN_LISTEN_ADDRESS:-[::]}:${PGADMIN_LISTEN_PORT:-80} -w 1 --threads ${GUNICORN_THREADS:-25} --access-logfile ${GUNICORN_ACCESS_LOGFILE:--} run_pgadmin:app
-fi
+exec gunicorn --reload --timeout ${TIMEOUT} --bind ${PGADMIN_LISTEN_ADDRESS:-[::]}:${PGADMIN_LISTEN_PORT:-80} -w 1 --threads ${GUNICORN_THREADS:-25} --access-logfile ${GUNICORN_ACCESS_LOGFILE:--} run_pgadmin:app

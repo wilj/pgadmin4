@@ -3,11 +3,13 @@ builtins.SERVER_MODE = True
 
 from pgAdmin4 import app
 from os import environ 
+from flask import redirect, request
 
 keycloak = environ.get('OIDC_KEYCLOAK_CLIENT_SECRETS')
 
 print("Using Keycloak config file: " + keycloak)
 app.config.update({
+    'WTF_CSRF_CHECK_DEFAULT': False,
     'TESTING': True,
     'DEBUG': True,
     'OIDC_ID_TOKEN_COOKIE_SECURE': True,
@@ -25,3 +27,20 @@ app.config.update({
 from flask_oidc import OpenIDConnect
 app.oidc = OpenIDConnect(app)
 oidc = app.oidc
+
+
+@app.route('/oidc_login')
+@oidc.require_login
+def oidc_login():
+    return 'Welcome %s' % oidc.user_getfield('email')
+
+
+@app.before_request
+def require_login_filter():
+    if request.path == "/login":
+        return redirect("/oidc_login")
+# @app.before_request
+# def do_login():
+#         print("ATTEMPTING REDIRECT TO OIDC SERVER")
+#         return oidc.redirect_to_auth_server(None, None)
+
