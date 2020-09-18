@@ -33,11 +33,6 @@ class AuthenticateModule(PgAdminModule):
 
 blueprint = AuthenticateModule(MODULE_NAME, __name__, static_url_path='')
 
-# @blueprint.route('/login', endpoint='login', methods=['GET', 'POST'])
-# def login():
-#     print("ATTEMPTING REDIRECT TO OIDC SERVER")
-#     return current_app.oidc.redirect_to_auth_server(None, flask.request.values)
-
 @blueprint.route('/login', endpoint='login', methods=['GET', 'POST'])
 def login():
     """
