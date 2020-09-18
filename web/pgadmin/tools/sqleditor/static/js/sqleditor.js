@@ -367,7 +367,7 @@ define('tools.querytool', [
       queryToolNotifications.renderNotificationsGrid(self.notifications_panel);
 
       var text_container = $('<textarea id="sql_query_tool" tabindex="-1"></textarea>');
-      var output_container = $('<div id="output-panel" tabindex="0"></div>').append(text_container);
+      var output_container = $('<label for="sql_query_tool" class="sr-only">SQL Editor</label><div id="output-panel" tabindex="0"></div>').append(text_container);
       self.sql_panel_obj.$container.find('.pg-panel-content').append(output_container);
 
       self.query_tool_obj = CodeMirror.fromTextArea(text_container.get(0), {
@@ -4302,13 +4302,24 @@ define('tools.querytool', [
           'trans_id': transId,
         });
 
-        url_endpoint += `?is_query_tool=${that.url_params.is_query_tool}`
+        url_endpoint += `?is_query_tool=${true}`
           +`&sgid=${that.url_params.sgid}`
           +`&sid=${that.url_params.sid}`
-          +`&server_type=${that.url_params.server_type}`
-          +`&did=${that.url_params.did}`;
+          +`&server_type=${that.url_params.server_type}`;
 
-        launchDataGrid(pgWindow.default.pgAdmin.DataGrid, transId, url_endpoint, that.url_params.title, '', alertify);
+        if(that.url_params.did) {
+          url_endpoint += `&did=${that.url_params.did}`;
+        }
+
+        let panel_title = that.url_params.title;
+        if(that.url_params.is_query_tool == 'false') {//check whether query tool is hit from View/Edit
+          var split_title = that.url_params.title.split('/');
+          if(split_title.length > 2) {
+            panel_title = split_title[split_title.length-2] + '/' + split_title[split_title.length-1];
+          }
+        }
+
+        launchDataGrid(pgWindow.default.pgAdmin.DataGrid, transId, url_endpoint, panel_title, '', alertify);
       },
 
       /*
