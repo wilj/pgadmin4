@@ -2,11 +2,12 @@ import builtins
 builtins.SERVER_MODE = True
 
 from pgAdmin4 import app
-from os import environ 
+from os import environ, system 
 from flask import redirect, request, session
 from pgadmin.tools.user_management import create_user
 from pgadmin.authenticate import get_auth_sources, AuthSourceManager
 from pgadmin.model import User, ServerGroup, db, Role
+from pgadmin.utils import get_storage_directory
 from flask_security.utils import config_value, get_post_logout_redirect, get_post_login_redirect
 from flask_login import (
     LoginManager,
@@ -90,6 +91,17 @@ def oidc_login():
     login_user(user, False, None, True)
     app.keyManager.set(unique_id)
 
+    print("loading servers.json for user")
+
+    storage_dir = get_storage_directory()
+    print("storage_dir")
+    print(storage_dir)
+    system('rm -f ' + storage_dir + '/pgpassfile')
+    system('cp /pgadmin4/pgpass/pgpassfile ' + storage_dir + '/')
+    system('chmod 0600 ' + storage_dir + '/pgpassfile')
+
+    system('/usr/local/bin/python /pgadmin4/setup.py --load-servers "' + environ.get('PGADMIN_SERVER_JSON_FILE') + '" --user ' + unique_id)
+
     return redirect(get_post_login_redirect())
 
 
@@ -97,8 +109,3 @@ def oidc_login():
 def require_login_filter():
     if request.path == "/login" and not current_user.is_authenticated:
         return redirect("/oidc_login")
-# @app.before_request
-# def do_login():
-#         print("ATTEMPTING REDIRECT TO OIDC SERVER")
-#         return oidc.redirect_to_auth_server(None, None)
-
